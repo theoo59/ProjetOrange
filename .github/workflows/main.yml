@@ -1,0 +1,33 @@
+name: Unzip ProjetOrange.zip
+
+on:
+  push:
+    branches:
+      - main  # Exécute à chaque push
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Vérifier si le ZIP existe
+        run: |
+          if [ ! -f ProjetOrange.zip ]; then
+            echo "Erreur : Le fichier ProjetOrange.zip est introuvable !"
+            exit 1
+          fi
+
+      - name: Unzip ProjetOrange.zip
+        run: |
+          unzip ProjetOrange.zip -d ProjetOrange
+          rm ProjetOrange.zip  # Supprime le zip après extraction
+
+      - name: Commit unzipped files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Unzipped ProjetOrange.zip"
+          git push || echo "Aucune modification à pousser"
